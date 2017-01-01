@@ -1,3 +1,6 @@
-﻿  Screen.cpp
+﻿  main.cpp
+  Screen.cpp
+  Game.cpp
+  Generating Code...
   tetris.vcxproj -> D:\scoala\anul I\IP\proiect\tetris\Debug\tetris.exe
   tetris.vcxproj -> D:\scoala\anul I\IP\proiect\tetris\Debug\tetris.pdb (Partial PDB)

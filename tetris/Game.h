@@ -10,7 +10,7 @@ public:
 	void init();
 
 private:
-	int x, y;
+	int width, height;
 	bool running;
 	Screen screen;
 	void update();

@@ -4,23 +4,23 @@ class Screen
 {
 public:
 	Screen(int, int);
-	Screen();
 	~Screen();
-	bool init();
-	bool loadMedia();
 	void close();
 	void update();
+	SDL_Event* quitEvent = new SDL_Event();
 
 private:
-	int x;
-	int y;
+	int width;
+	int height;
 	//The window we'll be rendering to
-	SDL_Window* gWindow = NULL;
+	SDL_Window* window = NULL;
+	SDL_Surface* suprafata = NULL;
+	SDL_Texture* textura = NULL; 
+	SDL_Rect dreptunghi;
+	
 
-	//The surface contained by the window
-	SDL_Surface* gScreenSurface = NULL;
+	//The renderer
+	SDL_Renderer* renderer = NULL;
 
-	//The image we will load and show on the screen
-	SDL_Surface* gHelloWorld = NULL;
 };
 

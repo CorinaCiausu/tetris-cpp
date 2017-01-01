@@ -4,11 +4,10 @@
 #include <ctime>
 #include <iostream>
 
-Game::Game(int x, int y)
+Game::Game(int width, int height) : screen(width, height)
 {
-	this->x = x;
-	this->y = y;
-	this->screen = Screen(x, y);
+	this->width = width;
+	this->height = height;
 	this->running = false;
 }
 
@@ -25,7 +24,7 @@ void Game::run()
 	int frames = 0;
 	int updates = 0;
 
-	while (this->running)
+	while (this->running && screen.quitEvent->type!=SDL_QUIT)
 	{
 		high_resolution_clock::time_point now = high_resolution_clock::now();
 		delta += (now.time_since_epoch().count() - lastTime.time_since_epoch().count())/ns;
@@ -59,7 +58,7 @@ void Game::init()
 
 void Game::update()
 {
-	screen.update();
+
 }
 
 Game::~Game()
@@ -69,5 +68,5 @@ Game::~Game()
 
 void Game::render()
 {
-
+	screen.update();
 }

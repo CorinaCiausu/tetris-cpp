@@ -4,8 +4,7 @@
 
 int main(int argc, char* args[])
 {
-	std::cout << "ayy";
-	const int x = 800, y = 600;
+	const int x = 1280, y = 720;
 	Game game = Game(x, y);
 	
 	game.init(); // initialize game - load data, open window

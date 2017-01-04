@@ -1,5 +1,9 @@
 #pragma once
 #include <SDL.h>
+#include "Button.h"
+
+class Scene;
+
 class Screen
 {
 public:
@@ -7,19 +11,16 @@ public:
 	~Screen();
 	void close();
 	void update();
-	SDL_Event* quitEvent = new SDL_Event();
+	void render(Scene *scene);
+	SDL_Renderer* getRenderer();
+	int getWidth();
+	int getHeight();
 
 private:
 	int width;
 	int height;
 	//The window we'll be rendering to
 	SDL_Window* window = NULL;
-	SDL_Surface* suprafata = NULL;
-	SDL_Texture* textura = NULL; 
-	SDL_Rect dreptunghi;
-	
-
-	//The renderer
 	SDL_Renderer* renderer = NULL;
 
 };

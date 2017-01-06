@@ -1,7 +1,5 @@
 #include "Scene.h"
 
-
-
 Scene::Scene(const char* name)
 {
 	this->name = name;
@@ -17,6 +15,11 @@ void Scene::addButton(Button *button)
 	buttons.push_back(button);
 }
 
+void Scene::addBoard(Board *board)
+{
+	this->board = board;
+}
+
 void Scene::setBackground(Background *background)
 {
 	this->background = background;
@@ -28,6 +31,8 @@ void Scene::update()
 	{
 		button->update();
 	}
+	if (board)
+		board->update();
 }
 
 void Scene::render(Screen *screen)
@@ -37,6 +42,8 @@ void Scene::render(Screen *screen)
 	{
 		button->render(screen);
 	}
+	if (board)
+		board->render(screen);
 }
 Scene::~Scene()
 {

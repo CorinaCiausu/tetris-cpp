@@ -2,14 +2,15 @@
 #include <SDL.h>
 #include <SDL_image.h>
 #include "Screen.h"
+#include "Texture.h"
 #include <iostream>
 #include "Game.h"
 #include <string>
 
-Button::Button(Screen *screen, int x, int y, int w, int h)
+Button::Button(int x, int y, int w, int h)
 {
 	TTF_Init();
-
+	this->screen = Game::getScreen();
 	this->x = x;
 	this->y = y;
 	this->w = w;
@@ -28,26 +29,20 @@ Button::Button(Screen *screen, int x, int y, int w, int h)
 	textRect.h = h - 20;
 
 	font = TTF_OpenFont("fonts/gnuolane.ttf", 100);
-	std::cout << SDL_GetError() << "!";
-
 	message = TTF_RenderText_Blended(font, name.c_str(), textColor);
-	texture = SDL_CreateTextureFromSurface(screen->getRenderer(), message);
+	texture = Texture::basicButtonTexture;
+	messageTexture = SDL_CreateTextureFromSurface(screen->getRenderer(), message);
 }
 
-Button::Button(Screen *screen, int x, int y, int w, int h, const char* textureName) : Button(screen, x, y, w, h)
+Button::Button(int x, int y, int w, int h, Texture *texture) : Button(x, y, w, h)
 {
-	surface = IMG_Load(textureName);
-	texture = SDL_CreateTextureFromSurface(screen->getRenderer(), surface);
-}
-
-Button::Button(Screen* screen)
-{
-	x = 0;
-	y = 0;
+	this->texture = texture;
 }
 
 Button::Button()
 {
+	x = 0;
+	y = 0;
 }
 
 void Button::setName(const char* name)
@@ -124,7 +119,7 @@ void Button::handleClick()
 }
 void Button::render(Screen* screen)
 {
-	SDL_RenderCopy(screen->getRenderer(), texture, NULL, &rect);
+	texture->render(this->screen, &rect);
 	SDL_RenderCopy(screen->getRenderer(), messageTexture, NULL, &textRect);
 }
 Button::~Button()

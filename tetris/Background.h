@@ -7,7 +7,7 @@ class Screen;
 class Background: public Entity
 {
 public:
-	Background(Screen *screen, const char* textureName);
+	Background(const char* textureName);
 	Background();
 	~Background();
 	void update();
@@ -15,6 +15,7 @@ public:
 
 private:
 	int x, y, w, h;
+	Screen *screen;
 	SDL_Rect rect;
 	SDL_Surface* surface = NULL;
 	SDL_Texture* texture = NULL;

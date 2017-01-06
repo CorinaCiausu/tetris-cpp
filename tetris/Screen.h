@@ -8,6 +8,7 @@ class Screen
 {
 public:
 	Screen(int, int);
+	Screen();
 	~Screen();
 	void close();
 	void update();

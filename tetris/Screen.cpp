@@ -32,11 +32,6 @@ int Screen::getWidth()
 	return width;
 }
 
-SDL_Renderer *Screen::getRenderer()
-{
-	return this->renderer;
-}
-
 int Screen::getHeight()
 {
 	return height;
@@ -54,7 +49,14 @@ void Screen::render(Scene *scene)
 	scene->render(this);
 	SDL_RenderPresent(renderer);
 }
+Screen::Screen()
+{
 
+}
+SDL_Renderer* Screen::getRenderer()
+{
+	return this->renderer;
+}
 void Screen::close()
 {
 	//Destroy window

@@ -1,9 +1,12 @@
 #include "Background.h"
 #include "Screen.h"
+#include "Game.h"
 #include <SDL_image.h>
 #include <iostream>
-Background::Background(Screen *screen, const char* textureName)
+
+Background::Background(const char* textureName)
 {
+	screen = Game::getScreen();
 	x = 0;
 	y = 0;
 	w = screen->getWidth();

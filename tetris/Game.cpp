@@ -5,6 +5,7 @@
 #include <iostream>
 #include "Scene.h"
 #include <SDL_ttf.h>
+#include "Texture.h"
 
 SDL_Event Game::mainEvent;
 bool Game::running = false;
@@ -12,11 +13,14 @@ Scene *Game::currentScene = NULL;
 Scene Game::gameScene;
 Scene Game::menuScene;
 Scene Game::scoresScene;
+Screen Game::screen;
 
-Game::Game(int width, int height) : screen(width, height)
+Game::Game(int x, int y)
 {
-	this->width = width;
-	this->height = height;
+	this->screen = Screen(x, y);
+	Texture::init();
+	this->width = x;
+	this->height = y;
 	this->running = false;
 	menuScene = Scene("Menu");
 	gameScene = Scene("Game");
@@ -24,6 +28,10 @@ Game::Game(int width, int height) : screen(width, height)
 	currentScene = &menuScene;
 }
 
+Screen* Game::getScreen()
+{
+	return &screen;
+}
 
 void Game::run()
 {
@@ -75,33 +83,34 @@ void Game::init()
 
 void Game::initGame()
 {
-	gameScene.setBackground(new Background(&screen, "textures/joc.png"));
+	gameScene.setBackground(new Background("textures/joc.png"));
+	gameScene.addBoard(new Board(300, 100, 10, 13, 50));
 }
 
 void Game::initScores()
 {
-	scoresScene.setBackground(new Background(&screen, "textures/highscores.png"));
+	scoresScene.setBackground(new Background("textures/highscores.png"));
 }
 
 void Game::initMenu()
 {
-	Button *b1 = new Button(&screen, screen.getWidth() / 2 - 270 / 2 - 30, screen.getHeight() / 2 - 70 / 2, 270, 70, "textures/butonel.png");
+	Button *b1 = new Button(screen.getWidth() / 2 - 270 / 2 - 30, screen.getHeight() / 2 - 70 / 2, 270, 70, Texture::basicButtonTexture);
 	menuScene.addButton(b1);
 	b1->setName("Start game");
 
-	Button *b2 = new Button(&screen, screen.getWidth() / 2 - 270 / 2 - 30, screen.getHeight() / 2 - 70 / 2 + 100, 270, 70, "textures/butonel.png");
+	Button *b2 = new Button(screen.getWidth() / 2 - 270 / 2 - 30, screen.getHeight() / 2 - 70 / 2 + 100, 270, 70, Texture::basicButtonTexture);
 	menuScene.addButton(b2);
 	b2->setName("High scores");
 
-	Button *b3 = new Button(&screen, screen.getWidth() / 2 - 270 / 2 - 30, screen.getHeight() / 2 - 70 / 2 + 200, 270, 70, "textures/butonel.png");
+	Button *b3 = new Button(screen.getWidth() / 2 - 270 / 2 - 30, screen.getHeight() / 2 - 70 / 2 + 200, 270, 70, Texture::basicButtonTexture);
 	menuScene.addButton(b3);
 	b3->setName("Sound settings");
 
-	Button *b4 = new Button(&screen, screen.getWidth() / 2 - 270 / 2 - 30, screen.getHeight() / 2 - 70 / 2 + 300, 270, 70, "textures/butonel.png");
+	Button *b4 = new Button(screen.getWidth() / 2 - 270 / 2 - 30, screen.getHeight() / 2 - 70 / 2 + 300, 270, 70, Texture::basicButtonTexture);
 	menuScene.addButton(b4);
 	b4->setName(" Quit game");
 
-	menuScene.setBackground(new Background(&screen, "textures/meniu.png"));
+	menuScene.setBackground(new Background("textures/meniu.png"));
 }
 
 SDL_Event Game::getMainEvent()

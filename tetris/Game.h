@@ -13,11 +13,12 @@ public:
 	static SDL_Event getMainEvent();
 	static void quit();
 	static void changeScene(string sceneName);
+	static Screen *getScreen();
 
 private:
 	int width, height;
 	static bool running;
-	Screen screen;
+	static Screen screen;
 	static Scene *currentScene;
 	static Scene menuScene, scoresScene, gameScene;
 	static SDL_Event mainEvent;

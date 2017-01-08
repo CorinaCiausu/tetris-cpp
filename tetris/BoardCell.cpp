@@ -6,7 +6,7 @@
 BoardCell::BoardCell(int x, int y, int w, Texture *texture)
 {
 	this->x = x;
-	this->y = y - w;
+	this->y = y;
 	this->w = w;
 	this->h = w;
 	this->isActive = true;

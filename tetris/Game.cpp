@@ -84,12 +84,15 @@ void Game::init()
 void Game::initGame()
 {
 	gameScene.setBackground(new Background("textures/joc.png"));
-	gameScene.addBoard(new Board(300, 100, 10, 13, 50));
+	gameScene.addBoard(new Board(300, 50, 10, 13, 50));
 }
 
 void Game::initScores()
 {
 	scoresScene.setBackground(new Background("textures/highscores.png"));
+	Button *back = new Button(980, 535, 200, 70, Texture::basicButtonTexture);
+	scoresScene.addButton(back);
+	back->setName("Back");
 }
 
 void Game::initMenu()
@@ -108,7 +111,7 @@ void Game::initMenu()
 
 	Button *b4 = new Button(screen.getWidth() / 2 - 270 / 2 - 30, screen.getHeight() / 2 - 70 / 2 + 300, 270, 70, Texture::basicButtonTexture);
 	menuScene.addButton(b4);
-	b4->setName(" Quit game");
+	b4->setName("Quit game");
 
 	menuScene.setBackground(new Background("textures/meniu.png"));
 }
@@ -141,6 +144,9 @@ void Game::changeScene(string sceneName)
 	else
 		if (sceneName.compare("Scores") == 0)
 			currentScene = &scoresScene;
+		else
+			if (sceneName.compare("Menu") == 0)
+				currentScene = &menuScene;
 }
 
 void Game::render(Screen screen)

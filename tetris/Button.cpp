@@ -102,7 +102,8 @@ void Button::handleFocusExit()
 
 void Button::handleClick()
 {
-	if(name.compare("Quit game")==0)
+	cout << name << " ";
+	if (name.compare("Quit game") == 0)
 	{
 		Game::quit();
 	}
@@ -112,10 +113,14 @@ void Button::handleClick()
 			Game::changeScene("Game");
 		}
 		else
-			if(name.compare("High scores")==0)
+			if (name.compare("High scores") == 0)
 			{
 				Game::changeScene("Scores");
 			}
+			else
+				if (name.compare("Back") == 0)
+					Game::changeScene("Menu");
+
 }
 void Button::render(Screen* screen)
 {

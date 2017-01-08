@@ -2,10 +2,15 @@
 #include "BoardCell.h"
 #include <iostream>
 #include "Shape.h"
+#include "Texture.h"
 #include <random>
+#include <ctime>
+
+using namespace std;
 
 Board::Board(int x, int y, int xCells, int yCells, int cellWidth)
 {
+	srand(time(0));
 	this->x = x;
 	this->y = y;
 	this->xCells = xCells;
@@ -14,6 +19,12 @@ Board::Board(int x, int y, int xCells, int yCells, int cellWidth)
 	this->currentX = 4;
 	this->currentY = 0;
 	initCells();
+	nextShapeRect.x = 980;
+	nextShapeRect.y = 345;
+	nextShapeRect.w = 195;
+	nextShapeRect.h = 200;
+	nextShapeTexture = NULL;
+	nextShapeNumber = rand() % 7;
 	generateRandomShape();
 	initDrawBoard();
 	placeShape();
@@ -33,15 +44,74 @@ void Board::placeShape()
 {
 	for (int i = 0; i < 4; i++)
 		for (int j = 0; j < 4; j++)
+			if(shape->info[i][j])
 			boardInfo[currentX + j][currentY + i] = shape->info[i][j];
 }
 
-void Board::clearShape()
+void Board::clearShape(int boardInfo[50][50])
 {
+	for(int i=0;i<4;i++)
+	{
+		for (int j = 0; j < 4; j++)
+		{
+			if (shape->info[i][j] != 0)
+				if (currentY + i >= 0 && currentX + j >= 0)
+					boardInfo[currentX + j][currentY + i] = 0;
+		}
+	}
+}
+
+void Board::shallowClearShape(int shallowBoard[50][50])
+{
+	for (int j = 0; j < xCells; j++)
+		for (int i = 0; i < yCells; i++)
+			shallowBoard[j][i] = boardInfo[j][i];
+	clearShape(shallowBoard);
+}
+
+void Board::setNextShapeTexture()
+{
+	switch (nextShapeNumber)
+	{
+	case 0:
+		nextShapeTexture = Texture::I_DisplayTexture;
+		break;
+	case 1:
+		nextShapeTexture = Texture::L_DisplayTexture;
+		break;
+	case 2:
+		nextShapeTexture = Texture::O_DisplayTexture;
+		break;
+	case 3:
+		nextShapeTexture = Texture::J_DisplayTexture;
+		break;
+	case 4:
+		nextShapeTexture = Texture::S_DisplayTexture;
+		break;
+	case 5:
+		nextShapeTexture = Texture::T_DisplayTexture;
+		break;
+	case 6:
+		nextShapeTexture = Texture::Z_DisplayTexture;
+		break;
+	default:
+		break;
+	}
+}
+bool Board::isMovePossible(int nextX, int nextY, int nextShape[4][4])
+{
+	int shallowBoard[50][50];
+	shallowClearShape(shallowBoard);
 	for (int i = 0; i < 4; i++)
 		for (int j = 0; j < 4; j++)
-			if (boardInfo[currentX + j][currentY + i] == shape->info[i][j])
-				boardInfo[currentX + j][currentY + i] = 0;
+			if (nextY + i >= 0)
+				if (nextX + j > xCells || nextY + i > yCells || nextShape[i][j] && shallowBoard[nextX + j][nextY + i])
+				{
+					if (nextShape[i][j] && shallowBoard[nextX + j][nextY + i] && nextY + i == 0)
+						gameOver();
+					return false;
+				}
+	return true;
 }
 
 void Board::updateCells()
@@ -86,11 +156,18 @@ void Board::initDrawBoard()
 
 void Board::generateRandomShape()
 {
-	int shapeNumber = rand() % 7;
+	currentShapeNumber = nextShapeNumber;
+	nextShapeNumber = rand() % 7;
 	char shapes[] = "ILJOSTZ";
-	string shapeLetter = { shapes[shapeNumber] };
+	string shapeLetter = { shapes[currentShapeNumber] };
 	delete shape;
 	shape = new Shape(shapeLetter.c_str());
+	setNextShapeTexture();
+}
+
+void Board::gameOver()
+{
+	isGameOver = true;
 }
 Board::Board()
 {
@@ -100,20 +177,26 @@ void Board::update()
 {
 	normalSpeed--;
 	//add control
-	if (normalSpeed <= 0)
+	if (normalSpeed <= 0&&!isGameOver)
 	{
-		//check if it can move
-		if (currentY < yCells - 4)
+		if(isMovePossible(currentX, currentY+1,shape->info))
 		{
-			clearShape();
+			clearShape(this->boardInfo);
 			currentY++;
 			placeShape();
 			updateCells();
 		}
 		else
 		{
-			currentY = -4;
-			generateRandomShape();
+			for (int i = 0; i < 4; i++)
+				for (int j = 0; j < 4; j++)
+					if (shape->info[i][j] && currentY + i < 0)
+						gameOver();
+			if (currentY != 0)
+			{
+				currentY = -4;
+				generateRandomShape();
+			}
 		}
 		normalSpeed = 10;
 	}
@@ -123,7 +206,7 @@ void Board::render(Screen *screen)
 {
 	for (BoardCell *boardCell : cells)
 		boardCell->render(screen);
-	//shape->render(screen);
+	nextShapeTexture->render(screen, &nextShapeRect);
 }
 
 Board::~Board()

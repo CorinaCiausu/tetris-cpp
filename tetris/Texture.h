@@ -16,6 +16,15 @@ public:
 	static Texture *S_Texture;
 	static Texture *Z_Texture;
 	static Texture *J_Texture;
+
+	static Texture *L_DisplayTexture;
+	static Texture *T_DisplayTexture;
+	static Texture *I_DisplayTexture;
+	static Texture *O_DisplayTexture;
+	static Texture *S_DisplayTexture;
+	static Texture *Z_DisplayTexture;
+	static Texture *J_DisplayTexture;
+
 	static Texture *emptyCell;
 	static Texture *basicButtonTexture;
 	void render(Screen *screen, SDL_Rect *rect);

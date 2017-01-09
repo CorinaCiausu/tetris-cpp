@@ -20,13 +20,14 @@ private:
 	static bool running;
 	static Screen screen;
 	static Scene *currentScene;
-	static Scene menuScene, scoresScene, gameScene;
+	static Scene menuScene, scoresScene, gameScene, soundScene;
 	static SDL_Event mainEvent;
 	void update();
 	void render(Screen);
 	void initMenu();
 	void initScores();
 	void initGame();
+	void initSound();
 	void exit();
 };
 

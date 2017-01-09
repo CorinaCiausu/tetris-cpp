@@ -80,10 +80,10 @@ void Board::setNextShapeTexture()
 		nextShapeTexture = Texture::L_DisplayTexture;
 		break;
 	case 2:
-		nextShapeTexture = Texture::O_DisplayTexture;
+		nextShapeTexture = Texture::J_DisplayTexture;
 		break;
 	case 3:
-		nextShapeTexture = Texture::J_DisplayTexture;
+		nextShapeTexture = Texture::O_DisplayTexture;
 		break;
 	case 4:
 		nextShapeTexture = Texture::S_DisplayTexture;

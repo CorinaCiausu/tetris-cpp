@@ -120,6 +120,9 @@ void Button::handleClick()
 			else
 				if (name.compare("Back") == 0)
 					Game::changeScene("Menu");
+				else
+					if (name.compare("Sound settings") == 0)
+						Game::changeScene("Sound");
 
 }
 void Button::render(Screen* screen)

@@ -14,6 +14,7 @@ Scene Game::gameScene;
 Scene Game::menuScene;
 Scene Game::scoresScene;
 Screen Game::screen;
+Scene Game::soundScene;
 
 Game::Game(int x, int y)
 {
@@ -25,6 +26,7 @@ Game::Game(int x, int y)
 	menuScene = Scene("Menu");
 	gameScene = Scene("Game");
 	scoresScene = Scene("Scores");
+	soundScene = Scene("Sound");
 	currentScene = &menuScene;
 }
 
@@ -79,12 +81,16 @@ void Game::init()
 	initMenu();
 	initGame();
 	initScores();
+	initSound();
 }
 
 void Game::initGame()
 {
 	gameScene.setBackground(new Background("textures/joc.png"));
 	gameScene.addBoard(new Board(300, 50, 10, 13, 50));
+	Button *back = new Button(970, 615, 200, 70, Texture::basicButtonTexture);
+	gameScene.addButton(back);
+	back->setName("Back");
 }
 
 void Game::initScores()
@@ -95,6 +101,19 @@ void Game::initScores()
 	back->setName("Back");
 }
 
+void Game::initSound()
+{
+	soundScene.setBackground(new Background("textures/sound.png"));
+	Button *back = new Button(40, 50, 200, 70, Texture::basicButtonTexture);
+	soundScene.addButton(back);
+	back->setName("Back");
+	Button *off = new Button(150, 580, 200, 70, Texture::basicButtonTexture);
+	soundScene.addButton(off);
+	off->setName("Turn off");
+	Button *on = new Button(830, 580, 200, 70, Texture::basicButtonTexture);
+	soundScene.addButton(on);
+	on->setName("Turn on");
+}
 void Game::initMenu()
 {
 	Button *b1 = new Button(screen.getWidth() / 2 - 270 / 2 - 30, screen.getHeight() / 2 - 70 / 2, 270, 70, Texture::basicButtonTexture);
@@ -147,6 +166,9 @@ void Game::changeScene(string sceneName)
 		else
 			if (sceneName.compare("Menu") == 0)
 				currentScene = &menuScene;
+			else
+				if (sceneName.compare("Sound") == 0)
+					currentScene = &soundScene;
 }
 
 void Game::render(Screen screen)

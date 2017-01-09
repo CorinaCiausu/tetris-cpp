@@ -18,7 +18,8 @@ public:
 
 private:
 	int x, y, w, h, cellWidth, xCells, yCells, currentX, currentY, currentShapeNumber, nextShapeNumber;
-	bool isGameOver = false;
+	bool isGameOver = false, left = false, right = false, up = false, down = false;
+	bool moveLeft = false, moveRight = false, rotateShape = false, speedUp = false;
 	vector<BoardCell*> cells;
 	SDL_Rect nextShapeRect;
 	Texture *nextShapeTexture;

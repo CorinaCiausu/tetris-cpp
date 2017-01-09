@@ -3,6 +3,8 @@
 #include <iostream>
 #include "Shape.h"
 #include "Texture.h"
+#include <SDL.h>
+#include "Game.h"
 #include <random>
 #include <ctime>
 
@@ -44,7 +46,7 @@ void Board::placeShape()
 {
 	for (int i = 0; i < 4; i++)
 		for (int j = 0; j < 4; j++)
-			if(shape->info[i][j])
+			if(shape->info[i][j] && currentX)
 			boardInfo[currentX + j][currentY + i] = shape->info[i][j];
 }
 
@@ -104,7 +106,7 @@ bool Board::isMovePossible(int nextX, int nextY, int nextShape[4][4])
 	shallowClearShape(shallowBoard);
 	for (int i = 0; i < 4; i++)
 		for (int j = 0; j < 4; j++)
-			if (nextY + i >= 0)
+			if (nextY + i >= 0 && nextX + j >= 0)
 				if (nextX + j > xCells || nextY + i > yCells || nextShape[i][j] && shallowBoard[nextX + j][nextY + i])
 				{
 					if (nextShape[i][j] && shallowBoard[nextX + j][nextY + i] && nextY + i == 0)
@@ -176,10 +178,72 @@ Board::Board()
 void Board::update()
 {
 	normalSpeed--;
-	//add control
+	if (Game::getMainEvent().type == SDL_KEYDOWN)
+	{
+		SDL_Keycode keyPressed = Game::getMainEvent().key.keysym.sym;
+		switch (keyPressed)
+		{
+		case SDLK_RIGHT:
+			moveRight = !right;
+			right = true;
+			break;
+		case SDLK_LEFT:
+			moveLeft = !left;
+			left = true;
+			break;
+		case SDLK_DOWN:
+			down = true;
+			break;
+		case SDLK_UP:
+			rotateShape = !up;
+			up = true;
+			break;
+		}
+		if(moveRight && isMovePossible(currentX + 1, currentY, shape->info))
+		{
+			clearShape(this->boardInfo);
+			currentX++;
+			placeShape();
+			updateCells();
+		}
+		else if(moveLeft && isMovePossible(currentX - 1, currentY, shape->info))
+		{
+			clearShape(this->boardInfo);
+			currentX--;
+			placeShape();
+			updateCells();
+		}
+		if (down)
+			normalSpeed -= 5;
+	}
+	else
+		if (Game::getMainEvent().type == SDL_KEYUP)
+		{
+			SDL_Keycode keyPressed = Game::getMainEvent().key.keysym.sym;
+			switch (keyPressed)
+			{
+			case SDLK_RIGHT:
+				right = false;
+				moveRight = false;
+				break;
+			case SDLK_LEFT:
+				left = false;
+				moveLeft = false;
+				break;
+			case SDLK_DOWN:
+				down = false;
+				speedUp = false;
+				break;
+			case SDLK_UP:
+				up = false;
+				rotateShape = false;
+				break;
+			}
+		}
+
 	if (normalSpeed <= 0&&!isGameOver)
 	{
-		if(isMovePossible(currentX, currentY+1,shape->info))
+		if(isMovePossible(currentX, currentY + 1,shape->info))
 		{
 			clearShape(this->boardInfo);
 			currentY++;
@@ -198,7 +262,7 @@ void Board::update()
 				generateRandomShape();
 			}
 		}
-		normalSpeed = 10;
+		normalSpeed = 40;
 	}
 }
 

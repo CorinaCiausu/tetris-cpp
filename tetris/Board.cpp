@@ -1,19 +1,43 @@
-#include "Board.h"
-#include "BoardCell.h"
-#include <iostream>
-#include "Shape.h"
-#include "Texture.h"
-#include <SDL.h>
-#include "Game.h"
 #include <random>
 #include <ctime>
+#include <SDL_ttf.h>
+#include <SDL.h>
+#include <iostream>
+#include <fstream>
+#include "Board.h"
+#include "BoardCell.h"
+#include "Shape.h"
+#include "Texture.h"
+#include "Game.h"
+
 
 using namespace std;
 
 Board::Board(int x, int y, int xCells, int yCells, int cellWidth)
 {
+	TTF_Init();
+	font = TTF_OpenFont("fonts/gnuolane.ttf", 100);
+
+	textRect.x = 1050;
+	textRect.y = 70;
+	textRect.w = 200;
+	textRect.h = 100;
+
+	gameOverRect.x = 300;
+	gameOverRect.y = 200;
+	gameOverRect.w = 500;
+	gameOverRect.h = 150;
+
+	text = "Score: " + std::to_string(score);
+	message = TTF_RenderText_Blended(font, text.c_str(), textColor);
+	messageTexture = SDL_CreateTextureFromSurface(Game::getScreen()->getRenderer(), message);
+
+	gameOverMessage = TTF_RenderText_Blended(font, "Game over!", textColor);
+	gameOverMessageTexture = SDL_CreateTextureFromSurface(Game::getScreen()->getRenderer(), gameOverMessage);
+
 	srand(time(0));
 	shape = new Shape("L");
+
 	this->x = x;
 	this->y = y;
 	this->xCells = xCells;
@@ -21,7 +45,9 @@ Board::Board(int x, int y, int xCells, int yCells, int cellWidth)
 	this->cellWidth = cellWidth;
 	this->currentX = 4;
 	this->currentY = 0;
+
 	initCells();
+
 	nextShapeRect.x = 980;
 	nextShapeRect.y = 345;
 	nextShapeRect.w = 195;
@@ -32,6 +58,10 @@ Board::Board(int x, int y, int xCells, int yCells, int cellWidth)
 	initDrawBoard();
 	placeShape();
 	updateCells();
+
+	click = Mix_LoadWAV("sounds/click.wav");
+	if (click == NULL)
+		cout << "Failed to load beat music! SDL_mixer Error: %s\n" << Mix_GetError();
 }
 
 void Board::initCells()
@@ -62,6 +92,13 @@ void Board::clearShape(int boardInfo[50][50])
 					boardInfo[currentX + j][currentY + i] = 0;
 		}
 	}
+}
+
+void Board::displayScore()
+{
+	text = "Score: " + std::to_string(score);
+	message = TTF_RenderText_Blended(font, text.c_str(), textColor);
+	messageTexture = SDL_CreateTextureFromSurface(Game::getScreen()->getRenderer(), message);
 }
 
 void Board::shallowClearShape(int shallowBoard[50][50])
@@ -183,15 +220,26 @@ void Board::generateRandomShape()
 
 void Board::gameOver()
 {
-	isGameOver = true;
+	if (!isGameOver)
+	{
+		isGameOver = true;
+		string goMessage = "Game over! Score: " + to_string(score);
+		gameOverMessage = TTF_RenderText_Blended(font, goMessage.c_str(), gameOverColor);
+		gameOverMessageTexture = SDL_CreateTextureFromSurface(Game::getScreen()->getRenderer(), gameOverMessage);
+		ofstream out;
+		out.open("scores.txt", std::ios::app);
+		out << score << "\n";
+		out.close();
+	}
 }
+
+
 Board::Board()
 {
 }
 
-void Board::update()
+void Board::handleInput()
 {
-	normalSpeed--;
 	if (Game::getMainEvent().type == SDL_KEYDOWN)
 	{
 		SDL_Keycode keyPressed = Game::getMainEvent().key.keysym.sym;
@@ -267,6 +315,12 @@ void Board::update()
 				break;
 			}
 		}
+}
+
+void Board::update()
+{
+	normalSpeed--;
+	handleInput();
 
 	if (normalSpeed <= 0 && !isGameOver)
 	{
@@ -288,8 +342,15 @@ void Board::update()
 			currentY = -4;
 			currentX = 3;
 			generateRandomShape();
+			Mix_PlayChannel(-1, click, 0);
 		}
 		normalSpeed = 40;
+	}
+	else if (isGameOver)
+	{
+		twoSeconds--;
+		if (twoSeconds <= 0)
+			Game::changeScene("Scores");
 	}
 }
 
@@ -319,7 +380,7 @@ void Board::clearLines()
 		score += 400;
 	else if (linesCleared == 4)
 		score += 600;
-	cout << "score: " << score << "\n";
+	displayScore();
 	updateCells();
 }
 
@@ -349,9 +410,16 @@ void Board::render(Screen *screen)
 	for (BoardCell *boardCell : cells)
 		boardCell->render(screen);
 	nextShapeTexture->render(screen, &nextShapeRect);
+	if (isGameOver)
+	{
+		SDL_RenderCopy(screen->getRenderer(), gameOverMessageTexture, NULL, &gameOverRect);
+		SDL_RenderCopy(screen->getRenderer(), messageTexture, NULL, &textRect);
+	}
+	SDL_RenderCopy(screen->getRenderer(), messageTexture, NULL, &textRect);
 }
 
 Board::~Board()
 {
+	Mix_FreeChunk(click);
 }
 

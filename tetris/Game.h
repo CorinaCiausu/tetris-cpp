@@ -2,6 +2,7 @@
 #include "Screen.h"
 #include "Scene.h"
 #include <string>
+#include <SDL_mixer.h>
 
 class Game
 {
@@ -14,6 +15,8 @@ public:
 	static void quit();
 	static void changeScene(string sceneName);
 	static Screen *getScreen();
+	static void playMusic();
+	static void pauseMusic();
 
 private:
 	int width, height;
@@ -22,11 +25,12 @@ private:
 	static Scene *currentScene;
 	static Scene menuScene, scoresScene, gameScene, soundScene;
 	static SDL_Event mainEvent;
+	static Mix_Music *music;
 	void update();
 	void render(Screen);
 	void initMenu();
-	void initScores();
-	void initGame();
+	static void initScores();
+	static void initGame();
 	void initSound();
 	void exit();
 };

@@ -69,8 +69,8 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <IncludePath>D:\scoala\anul I\IP\proiect\tetris\SDL2_ttf-2.0.14\include;D:\scoala\anul I\IP\proiect\tetris\SDL2_image-2.0.1\include;D:\scoala\anul I\IP\proiect\tetris\SDL\include;$(IncludePath)</IncludePath>
-    <LibraryPath>D:\scoala\anul I\IP\proiect\tetris\SDL2_ttf-2.0.14\lib\x86;D:\scoala\anul I\IP\proiect\tetris\SDL2_image-2.0.1\lib\x86;D:\scoala\anul I\IP\proiect\tetris\SDL\lib\win32;$(LibraryPath)</LibraryPath>
+    <IncludePath>D:\scoala\anul I\IP\proiect\tetris\SDL2_mixer-2.0.1\include;D:\scoala\anul I\IP\proiect\tetris\SDL2_ttf-2.0.14\include;D:\scoala\anul I\IP\proiect\tetris\SDL2_image-2.0.1\include;D:\scoala\anul I\IP\proiect\tetris\SDL\include;$(IncludePath)</IncludePath>
+    <LibraryPath>D:\scoala\anul I\IP\proiect\tetris\SDL2_mixer-2.0.1\lib\x86;D:\scoala\anul I\IP\proiect\tetris\SDL2_mixer-2.0.1\lib;D:\scoala\anul I\IP\proiect\tetris\SDL2_ttf-2.0.14\lib\x86;D:\scoala\anul I\IP\proiect\tetris\SDL2_image-2.0.1\lib\x86;D:\scoala\anul I\IP\proiect\tetris\SDL\lib\win32;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -79,9 +79,9 @@
       <SDLCheck>true</SDLCheck>
     </ClCompile>
     <Link>
-      <AdditionalLibraryDirectories>D:\scoala\anul I\IP\proiect\tetris\SDL2_ttf-2.0.14\lib\x86;D:\scoala\anul I\IP\proiect\tetris\SDL2_image-2.0.1\lib\x86;D:\scoala\anul I\IP\proiect\tetris\SDL\lib\win32;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>D:\scoala\anul I\IP\proiect\tetris\SDL2_mixer-2.0.1\lib\x86;D:\scoala\anul I\IP\proiect\tetris\SDL2_ttf-2.0.14\lib\x86;D:\scoala\anul I\IP\proiect\tetris\SDL2_image-2.0.1\lib\x86;D:\scoala\anul I\IP\proiect\tetris\SDL\lib\win32;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <SubSystem>Console</SubSystem>
-      <AdditionalDependencies>SDL2.lib; SDL2main.lib;SDL2_image.lib;SDL2_ttf.lib</AdditionalDependencies>
+      <AdditionalDependencies>SDL2.lib; SDL2main.lib;SDL2_image.lib;SDL2_ttf.lib;SDL2_mixer.lib</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -126,6 +126,7 @@
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Scene.cpp" />
+    <ClCompile Include="ScoresBoard.cpp" />
     <ClCompile Include="Screen.cpp" />
     <ClCompile Include="Shape.cpp" />
     <ClCompile Include="Texture.cpp" />
@@ -138,6 +139,7 @@
     <ClInclude Include="Entity.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="Scene.h" />
+    <ClInclude Include="ScoresBoard.h" />
     <ClInclude Include="Screen.h" />
     <ClInclude Include="Shape.h" />
     <ClInclude Include="Texture.h" />

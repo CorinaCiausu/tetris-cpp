@@ -25,6 +25,11 @@ void Scene::setBackground(Background *background)
 	this->background = background;
 }
 
+void Scene::addScoresBoard(ScoresBoard *scoresBoard)
+{
+	this->scoresBoard = scoresBoard;
+}
+
 void Scene::update()
 {
 	for (Button *button : buttons)
@@ -44,6 +49,10 @@ void Scene::render(Screen *screen)
 	}
 	if (board)
 		board->render(screen);
+	if (scoresBoard)
+	{
+		scoresBoard->render(screen);
+	}
 }
 Scene::~Scene()
 {

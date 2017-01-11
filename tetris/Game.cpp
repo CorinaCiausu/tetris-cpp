@@ -5,6 +5,7 @@
 #include <iostream>
 #include "Scene.h"
 #include <SDL_ttf.h>
+#include <SDL_image.h>
 #include "Texture.h"
 
 SDL_Event Game::mainEvent;
@@ -15,11 +16,20 @@ Scene Game::menuScene;
 Scene Game::scoresScene;
 Screen Game::screen;
 Scene Game::soundScene;
+Mix_Music *Game::music = NULL;
 
 Game::Game(int x, int y)
 {
 	this->screen = Screen(x, y);
 	Texture::init();
+	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) < 0)
+		cout << "SDL could not initialize! SDL Error:\n" << SDL_GetError();
+	if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048) < 0)
+		cout << "SDL_mixer could not initialize! SDL_mixer Error: %s\n" << Mix_GetError();
+
+	this->music = Mix_LoadMUS("sounds/melodie-craciun.mp3");
+	if (music == NULL)
+		cout << "Failed to load beat music! SDL_mixer Error: %s\n" << Mix_GetError();
 	this->width = x;
 	this->height = y;
 	this->running = false;
@@ -28,6 +38,7 @@ Game::Game(int x, int y)
 	scoresScene = Scene("Scores");
 	soundScene = Scene("Sound");
 	currentScene = &menuScene;
+	
 }
 
 Screen* Game::getScreen()
@@ -50,7 +61,7 @@ void Game::run()
 	while (this->running && mainEvent.type != SDL_QUIT)
 	{
 		high_resolution_clock::time_point now = high_resolution_clock::now();
-		delta += (now.time_since_epoch().count() - lastTime.time_since_epoch().count())/ns;
+		delta += (now.time_since_epoch().count() - lastTime.time_since_epoch().count()) / ns;
 		lastTime = now;
 		SDL_PollEvent(&mainEvent);
 
@@ -75,9 +86,20 @@ void Game::run()
 
 }
 
+void Game::playMusic()
+{
+	Mix_ResumeMusic();
+}
+void Game::pauseMusic()
+{
+	Mix_PauseMusic();
+}
+
 void Game::init()
 {
 	this->running = true;
+	Mix_VolumeMusic(20);
+	Mix_PlayMusic(music, -1);
 	initMenu();
 	initGame();
 	initScores();
@@ -86,6 +108,7 @@ void Game::init()
 
 void Game::initGame()
 {
+	gameScene = Scene();
 	gameScene.setBackground(new Background("textures/joc.png"));
 	gameScene.addBoard(new Board(300, 50, 10, 13, 50));
 	Button *back = new Button(970, 615, 200, 70, Texture::basicButtonTexture);
@@ -97,6 +120,8 @@ void Game::initScores()
 {
 	scoresScene.setBackground(new Background("textures/highscores.png"));
 	Button *back = new Button(980, 535, 200, 70, Texture::basicButtonTexture);
+	ScoresBoard *scoresBoard = new ScoresBoard();
+	scoresScene.addScoresBoard(scoresBoard);
 	scoresScene.addButton(back);
 	back->setName("Back");
 }
@@ -148,7 +173,10 @@ void Game::update()
 
 Game::~Game()
 {
-
+	Mix_FreeMusic(music);
+	Mix_Quit();
+	IMG_Quit();
+	SDL_Quit();
 }
 
 void Game::quit()
@@ -159,10 +187,16 @@ void Game::quit()
 void Game::changeScene(string sceneName)
 {
 	if (sceneName.compare("Game") == 0)
+	{
+		initGame();
 		currentScene = &gameScene;
+	}
 	else
 		if (sceneName.compare("Scores") == 0)
+		{
+			initScores();
 			currentScene = &scoresScene;
+		}
 		else
 			if (sceneName.compare("Menu") == 0)
 				currentScene = &menuScene;

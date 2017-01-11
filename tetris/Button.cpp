@@ -123,6 +123,12 @@ void Button::handleClick()
 				else
 					if (name.compare("Sound settings") == 0)
 						Game::changeScene("Sound");
+					else
+						if (name.compare("Turn off") == 0)
+							Game::pauseMusic();
+						else
+							if (name.compare("Turn on") == 0)
+								Game::playMusic();
 
 }
 void Button::render(Screen* screen)

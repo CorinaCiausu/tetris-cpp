@@ -6,6 +6,7 @@ public:
 	Shape();
 	~Shape();
 	void rotateShape();
+	void setShape(const char* shape);
 	int info[4][4];
 	char type;
 private:

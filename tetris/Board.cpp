@@ -13,6 +13,7 @@ using namespace std;
 Board::Board(int x, int y, int xCells, int yCells, int cellWidth)
 {
 	srand(time(0));
+	shape = new Shape("L");
 	this->x = x;
 	this->y = y;
 	this->xCells = xCells;
@@ -46,13 +47,13 @@ void Board::placeShape()
 {
 	for (int i = 0; i < 4; i++)
 		for (int j = 0; j < 4; j++)
-			if(shape->info[i][j] && currentX)
-			boardInfo[currentX + j][currentY + i] = shape->info[i][j];
+			if (shape->info[i][j] && currentX + j >= 0 && currentX + j < xCells && currentY + i >= 0)
+				boardInfo[currentX + j][currentY + i] = shape->info[i][j];
 }
 
 void Board::clearShape(int boardInfo[50][50])
 {
-	for(int i=0;i<4;i++)
+	for (int i = 0; i<4; i++)
 	{
 		for (int j = 0; j < 4; j++)
 		{
@@ -106,20 +107,34 @@ bool Board::isMovePossible(int nextX, int nextY, int nextShape[4][4])
 	shallowClearShape(shallowBoard);
 	for (int i = 0; i < 4; i++)
 		for (int j = 0; j < 4; j++)
-			if (nextY + i >= 0 && nextX + j >= 0)
-				if (nextX + j > xCells || nextY + i > yCells || nextShape[i][j] && shallowBoard[nextX + j][nextY + i])
+			if (nextShape[i][j])
+			{
+				if (nextX + j < 0 || nextX + j > xCells - 1) // sides of board
 				{
-					if (nextShape[i][j] && shallowBoard[nextX + j][nextY + i] && nextY + i == 0)
-						gameOver();
+					cout << nextX << "X\n";
 					return false;
 				}
+
+				if (nextY + i > yCells - 1)
+				{
+					cout << nextY + i << "Y\n";
+					return false; // bottom of board
+				}
+
+				if (nextY + i >= 0 && shallowBoard[nextX + j][nextY + i])
+				{
+					cout << nextX + j << " " << nextY + i << "\n";
+					return false;
+				}
+			}
+
 	return true;
 }
 
 void Board::updateCells()
 {
-	for(int i=0;i<yCells;i++)
-		for(int j=0;j<xCells;j++)
+	for (int i = 0; i<yCells; i++)
+		for (int j = 0; j<xCells; j++)
 			switch (boardInfo[j][i])
 			{
 			case 1:
@@ -162,8 +177,7 @@ void Board::generateRandomShape()
 	nextShapeNumber = rand() % 7;
 	char shapes[] = "ILJOSTZ";
 	string shapeLetter = { shapes[currentShapeNumber] };
-	delete shape;
-	shape = new Shape(shapeLetter.c_str());
+	shape->setShape(shapeLetter.c_str());
 	setNextShapeTexture();
 }
 
@@ -199,14 +213,14 @@ void Board::update()
 			up = true;
 			break;
 		}
-		if(moveRight && isMovePossible(currentX + 1, currentY, shape->info))
+		if (moveRight && isMovePossible(currentX + 1, currentY, shape->info))
 		{
 			clearShape(this->boardInfo);
 			currentX++;
 			placeShape();
 			updateCells();
 		}
-		else if(moveLeft && isMovePossible(currentX - 1, currentY, shape->info))
+		else if (moveLeft && isMovePossible(currentX - 1, currentY, shape->info))
 		{
 			clearShape(this->boardInfo);
 			currentX--;
@@ -214,7 +228,20 @@ void Board::update()
 			updateCells();
 		}
 		if (down)
-			normalSpeed -= 5;
+			normalSpeed -= 6;
+		if (rotateShape)
+		{
+			int rotatedShape[4][4];
+			hollowRotate(shape->info, rotatedShape);
+			if (isMovePossible(currentX, currentY, rotatedShape))
+			{
+				clearShape(this->boardInfo);
+				shape->rotateShape();
+				placeShape();
+				updateCells();
+
+			}
+		}
 	}
 	else
 		if (Game::getMainEvent().type == SDL_KEYUP)
@@ -241,9 +268,10 @@ void Board::update()
 			}
 		}
 
-	if (normalSpeed <= 0&&!isGameOver)
+	if (normalSpeed <= 0 && !isGameOver)
 	{
-		if(isMovePossible(currentX, currentY + 1,shape->info))
+
+		if (isMovePossible(currentX, currentY + 1, shape->info))
 		{
 			clearShape(this->boardInfo);
 			currentY++;
@@ -252,18 +280,68 @@ void Board::update()
 		}
 		else
 		{
+			clearLines();
 			for (int i = 0; i < 4; i++)
 				for (int j = 0; j < 4; j++)
 					if (shape->info[i][j] && currentY + i < 0)
 						gameOver();
-			if (currentY != 0)
-			{
-				currentY = -4;
-				generateRandomShape();
-			}
+			currentY = -4;
+			currentX = 3;
+			generateRandomShape();
 		}
 		normalSpeed = 40;
 	}
+}
+
+void Board::clearLines()
+{
+	int linesCleared = 0;
+	for (int i = 0; i < yCells; i++)
+	{
+		bool isFull = true;
+		for (int j = 0; j < xCells; j++)
+			if (boardInfo[j][i] == 0)
+				isFull = false;
+
+		if (isFull)
+		{
+			linesCleared++;
+			clearLine(i);
+			i--;
+		}
+
+	}
+	if (linesCleared == 1)
+		score += 100;
+	else if (linesCleared == 2)
+		score += 250;
+	else if (linesCleared == 3)
+		score += 400;
+	else if (linesCleared == 4)
+		score += 600;
+	cout << "score: " << score << "\n";
+	updateCells();
+}
+
+void Board::clearLine(int line)
+{
+	for (int i = line; i > 0; i--)
+		for (int j = 0; j < xCells; j++)
+			boardInfo[j][i] = boardInfo[j][i - 1];
+}
+
+void Board::hollowRotate(int mat[4][4], int res[4][4])
+{
+	for (int i = 0; i < 4; i++)
+	{
+		for (int j = 0; j < 4; j++)
+		{
+			res[i][j] = mat[4 - j - 1][i];
+			cout << res[i][j] << " ";
+		}
+		cout << "\n";
+	}
+	cout << "\n";
 }
 
 void Board::render(Screen *screen)
@@ -276,3 +354,4 @@ void Board::render(Screen *screen)
 Board::~Board()
 {
 }
+

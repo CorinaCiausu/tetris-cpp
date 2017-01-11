@@ -7,7 +7,7 @@
 #include <vector>
 #define MAX_WIDTH 50
 
-class Board: public Entity
+class Board : public Entity
 {
 public:
 	Board(int x, int y, int xCells, int yCells, int cellWidth);
@@ -17,12 +17,15 @@ public:
 	void render(Screen *screen);
 
 private:
-	int x, y, w, h, cellWidth, xCells, yCells, currentX, currentY, currentShapeNumber, nextShapeNumber;
+	int x, y, w, h, cellWidth, xCells, yCells, currentX, currentY, currentShapeNumber, nextShapeNumber, score = 0;
 	bool isGameOver = false, left = false, right = false, up = false, down = false;
 	bool moveLeft = false, moveRight = false, rotateShape = false, speedUp = false;
 	vector<BoardCell*> cells;
 	SDL_Rect nextShapeRect;
 	Texture *nextShapeTexture;
+	void hollowRotate(int mat[4][4], int res[4][4]);
+	void clearLines();
+	void clearLine(int line);
 	void setNextShapeTexture();
 	void initDrawBoard();
 	void placeShape();
@@ -38,4 +41,5 @@ private:
 	int boardInfo[MAX_WIDTH][MAX_WIDTH];
 
 };
+
 

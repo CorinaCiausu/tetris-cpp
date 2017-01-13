@@ -28,7 +28,7 @@ Button::Button(int x, int y, int w, int h)
 	textRect.w = w - 40;
 	textRect.h = h - 20;
 
-	font = TTF_OpenFont("fonts/gnuolane.ttf", 100);
+	font = TTF_OpenFont("./fonts/gnuolane.ttf", 100);
 	message = TTF_RenderText_Blended(font, name.c_str(), textColor);
 	texture = Texture::basicButtonTexture;
 	messageTexture = SDL_CreateTextureFromSurface(screen->getRenderer(), message);

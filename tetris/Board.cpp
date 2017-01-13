@@ -16,7 +16,7 @@ using namespace std;
 Board::Board(int x, int y, int xCells, int yCells, int cellWidth)
 {
 	TTF_Init();
-	font = TTF_OpenFont("fonts/gnuolane.ttf", 100);
+	font = TTF_OpenFont("./fonts/gnuolane.ttf", 100);
 
 	textRect.x = 1050;
 	textRect.y = 70;

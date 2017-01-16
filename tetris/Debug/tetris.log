@@ -1,2 +1,15 @@
-﻿  tetris.vcxproj -> D:\scoala\anul I\IP\proiect\tetris\Debug\tetris.exe
+﻿  Board.cpp
+d:\scoala\anul i\ip\proiect\tetris\tetris\board.cpp(38): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
+  Generating Code...
+  Skipping... (no relevant changes detected)
+  main.cpp
+  Texture.cpp
+  Screen.cpp
+  ScoresBoard.cpp
+  Scene.cpp
+  Game.cpp
+  Button.cpp
+  BoardCell.cpp
+  Background.cpp
+  tetris.vcxproj -> D:\scoala\anul I\IP\proiect\tetris\Debug\tetris.exe
   tetris.vcxproj -> D:\scoala\anul I\IP\proiect\tetris\Debug\tetris.pdb (Partial PDB)

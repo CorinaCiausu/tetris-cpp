@@ -249,6 +249,23 @@ void Board::handleInput()
 			moveRight = !right;
 			right = true;
 			break;
+			// added here
+		case SDLK_s:
+			plusSpeedUp = true;
+			minusSpeedDown = false;
+			isNormalSpeed = false;
+			break;
+		case SDLK_w:
+			plusSpeedUp = false;
+			minusSpeedDown = true;
+			isNormalSpeed = false;
+			break;
+		case SDLK_n:
+			isNormalSpeed = true;
+			plusSpeedUp = false;
+			minusSpeedDown = false;
+			break;
+			// ---------
 		case SDLK_LEFT:
 			moveLeft = !left;
 			left = true;
@@ -261,6 +278,7 @@ void Board::handleInput()
 			up = true;
 			break;
 		}
+
 		if (moveRight && isMovePossible(currentX + 1, currentY, shape->info))
 		{
 			clearShape(this->boardInfo);
@@ -276,7 +294,7 @@ void Board::handleInput()
 			updateCells();
 		}
 		if (down)
-			normalSpeed -= 6;
+			normalSpeed -= 1; // schimbat de la -6 la -1 ca sa compenseze pentru viteza mai mare de executie
 		if (rotateShape)
 		{
 			int rotatedShape[4][4];
@@ -320,7 +338,7 @@ void Board::handleInput()
 void Board::update()
 {
 	normalSpeed--;
-	handleInput();
+	//removed handleInput from here and moved into render for speed
 
 	if (normalSpeed <= 0 && !isGameOver)
 	{
@@ -344,7 +362,10 @@ void Board::update()
 			generateRandomShape();
 			Mix_PlayChannel(-1, click, 0);
 		}
-		normalSpeed = 40;
+
+		//added here
+		normalSpeed = standardSpeed;
+		// ------
 	}
 	else if (isGameOver)
 	{
@@ -407,6 +428,17 @@ void Board::hollowRotate(int mat[4][4], int res[4][4])
 
 void Board::render(Screen *screen)
 {
+	// added here
+	bool prevSpeedUp = plusSpeedUp, prevSpeedDown = minusSpeedDown, prevNormalSpeed = isNormalSpeed;
+	handleInput();
+	if (!prevSpeedUp && plusSpeedUp)
+		standardSpeed = 5;
+	if (!prevSpeedDown && minusSpeedDown)
+		standardSpeed = 80;
+	if (!prevNormalSpeed && isNormalSpeed)
+		standardSpeed = 40;
+	// ------
+
 	for (BoardCell *boardCell : cells)
 		boardCell->render(screen);
 	nextShapeTexture->render(screen, &nextShapeRect);

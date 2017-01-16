@@ -21,6 +21,10 @@ private:
 	int x, y, w, h, cellWidth, xCells, yCells, currentX, currentY, currentShapeNumber, nextShapeNumber, score = 0;
 	int twoSeconds = 120;
 	bool isGameOver = false, left = false, right = false, up = false, down = false;
+	// add + -
+	bool plusSpeedUp = false, minusSpeedDown = false, isNormalSpeed = true;
+	int standardSpeed = 40;
+	// end add
 	bool moveLeft = false, moveRight = false, rotateShape = false, speedUp = false;
 	Mix_Chunk *click = NULL;
 	vector<BoardCell*> cells;
